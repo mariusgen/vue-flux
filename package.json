@@ -28,6 +28,7 @@
     "dist"
   ],
   "dependencies": {
+    "cache-loader": "^1.2.5",
     "vue": "^2.5.17"
   },
   "devDependencies": {
