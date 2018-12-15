@@ -6,7 +6,7 @@
 		@touchstart="touchStart"
 		@touchend="touchEnd">
 
-		<img v-for="(src, index) in preload" :key="index" :src="path + src" alt="" ref="images"
+		<img v-for="(src, index) in preload" :key="preloadedImages.length + index" :src="path + src" alt="" ref="images"
 			@load="addImage(index)"
 			@error="addImage(index)">
 
@@ -76,6 +76,8 @@
 			imagesLoaded: 0,
 			loaded: false,
 			preload: [],
+			preloadedImages: [],
+			toBePreload: [],
 			properties: []
 		}),
 
@@ -103,6 +105,10 @@
 			captions: {
 				type: Array,
 				default: () => []
+			},
+			currentIndex: {
+				type: Number,
+				required: true,
 			}
 		},
 
@@ -243,30 +249,41 @@
 					this.$refs.image2.setCss({ zIndex: 10 });
 				});
 
-				this.preload = this.images.slice(0);
+				this.preload = this.images.slice(0, 3);
+				this.toBePreload = [...this.preload]
 			},
 
 			addImage(i) {
-				this.imagesLoaded++;
-
 				let img = this.$refs.images[i];
 
+				if (this.preloadedImages.includes(img.src)) return
+
+				this.imagesLoaded++;
 				if (img.naturalWidth || img.width) {
-					this.properties[i] = {
+					this.properties[this.preloadedImages.length + i] = {
 						src: img.src,
 						width: img.naturalWidth || img.width,
 						height: img.naturalHeight || img.height
 					};
 
 				} else {
-					console.warn('Image '+ this.images[i] +' could not be loaded');
+					console.warn('Image '+ this.images[this.preloadedImages.length + i] +' could not be loaded');
 				}
 
-				if (i === 0)
+				if (i === 0 && this.preloadedImages.length === 0) {
 					this.$refs.image1.init();
+				}
 
-				if (this.imagesLoaded === this.preload.length)
+				if (this.imagesLoaded === this.preload.length + this.preloadedImages.length  && this.preloadedImages.length === 0) {
+					this.preloadedImages.push(...this.toBePreload)
+					this.toBePreload = []
 					this.init();
+				}
+
+				if (this.preloadedImages.length >= 3 && this.toBePreload.length === 1) {
+					this.preloadedImages.push(...this.toBePreload)
+					this.toBePreload = []
+				}
 			},
 
 			updateOptions() {
@@ -542,6 +559,14 @@
 				let nextImage = this.nextImage();
 
 				this[nextImage.reference] = this.getIndex(index);
+
+
+				// if (this[nextImage.reference])
+				if (this.images.length > this.imagesLoaded && this.currentIndex + 4 > this.imagesLoaded ) {
+					this.preload = this.images.slice(this.imagesLoaded, this.imagesLoaded + 1);
+					this.toBePreload = [...this.preload]
+				}
+
 				nextImage.show();
 
 				this.$nextTick(() => {
