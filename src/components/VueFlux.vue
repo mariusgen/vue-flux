@@ -260,21 +260,21 @@
 
 				this.imagesLoaded++;
 				if (img.naturalWidth || img.width) {
-					this.properties[this.preloadedImages.length + i] = {
+					this.properties[i] = {
 						src: img.src,
 						width: img.naturalWidth || img.width,
 						height: img.naturalHeight || img.height
 					};
 
 				} else {
-					console.warn('Image '+ this.images[this.preloadedImages.length + i] +' could not be loaded');
+					console.warn('Image '+ this.images[i] +' could not be loaded');
 				}
 
 				if (i === 0 && this.preloadedImages.length === 0) {
 					this.$refs.image1.init();
 				}
 
-				if (this.imagesLoaded === this.preload.length + this.preloadedImages.length  && this.preloadedImages.length === 0) {
+				if (this.imagesLoaded === this.preload.length  && this.preloadedImages.length === 0) {
 					this.preloadedImages.push(...this.toBePreload)
 					this.toBePreload = []
 					this.init();
@@ -377,7 +377,7 @@
 
 			init() {
 				this.properties = this.properties.filter((p) => p);
-				this.preload = [];
+				// this.preload = [];
 				this.loaded = true;
 
 				this.$refs.image2.init();
@@ -560,11 +560,10 @@
 
 				this[nextImage.reference] = this.getIndex(index);
 
-
 				// if (this[nextImage.reference])
 				if (this.images.length > this.imagesLoaded && this.currentIndex + 4 > this.imagesLoaded ) {
-					this.preload = this.images.slice(this.imagesLoaded, this.imagesLoaded + 1);
-					this.toBePreload = [...this.preload]
+					this.toBePreload = this.images.slice(this.imagesLoaded, this.imagesLoaded + 1)
+					this.preload.push(...this.toBePreload)
 				}
 
 				nextImage.show();
