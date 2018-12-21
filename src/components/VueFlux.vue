@@ -391,6 +391,8 @@
 					this.$refs.image1.reference = 'image1Index';
 					this.$refs.image2.reference = 'image2Index';
 
+					this.$emit('initialised')
+
 					if (this.config.autoplay === true)
 						this.play();
 				});
