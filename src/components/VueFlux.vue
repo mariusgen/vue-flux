@@ -249,7 +249,10 @@
 					this.$refs.image2.setCss({ zIndex: 10 });
 				});
 
-				this.preload = this.images.slice(0, 3);
+				const endLoadingIndex = this.currentIndex === 0 ? 3 : this.currentIndex + 2
+
+				this.preload = this.images.slice(0, endLoadingIndex);
+				console.log('PRELOAD', this.preload)
 				this.toBePreload = [...this.preload]
 			},
 
