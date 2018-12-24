@@ -178,7 +178,7 @@
 
 		watch: {
 			options: function() {
-				this.setOptions();
+				this.updateOptions();
 			},
 
 			transitions: function() {
@@ -295,13 +295,19 @@
 				};
 
 				this.config = Object.assign({}, this.config, this.options);
-
 				if (currentSize.width !== this.config.width || currentSize.height !== this.config.height) {
 					this.size.width = this.config.width;
 					this.size.height = this.config.height;
 
 					this.resize();
 				}
+			},
+
+			reInitImages() {
+				this.$nextTick(() => {
+					this.$refs.image1.init();
+					this.$refs.image2.init();
+				})
 			},
 
 			updateTransitions() {
@@ -374,6 +380,7 @@
 
 					this.$refs.image1.init();
 					this.$refs.image2.init();
+
 				});
 			},
 
@@ -703,5 +710,6 @@
 	.mask {
 		position: relative;
 		overflow: visible;
+		margin: 0 auto;
 	}
 </style>
